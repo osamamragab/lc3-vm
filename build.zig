@@ -11,6 +11,8 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
         }),
     });
+    exe.linkLibC();
+    exe.addCSourceFile(.{ .file = b.path("src/term.c") });
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
