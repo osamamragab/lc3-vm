@@ -7,7 +7,7 @@ An LC-3 virtual machine implementation written in Zig.
 ### Running
 
 Simply build the project and run the output binary with the desired image file.
-Some example images are in `objs` directory.
+Some example images are in the `objs` directory.
 
 ```sh
 zig build
@@ -17,5 +17,5 @@ zig build
 
 ### Resources
 
-[Write your Own Virtual Machine](https://www.jmeiners.com/lc3-vm/)
-[Specification](https://www.jmeiners.com/lc3-vm/supplies/lc3-isa.pdf)
+- [Write your Own Virtual Machine](https://www.jmeiners.com/lc3-vm/)
+- [Specification](https://www.jmeiners.com/lc3-vm/supplies/lc3-isa.pdf)
