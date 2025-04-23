@@ -1,7 +1,5 @@
 const std = @import("std");
 
-extern fn check_key() bool;
-
 var stdout_writer = std.io.bufferedWriter(std.io.getStdOut().writer());
 const stdout = stdout_writer.writer();
 const stdin = std.io.getStdIn().reader();
@@ -134,13 +132,25 @@ pub const LC3 = struct {
         self.registers[R_COND] = flag.val();
     }
 
+    fn checkKey() bool {
+        var fds = [_]std.os.linux.pollfd{
+            .{
+                .fd = std.io.getStdIn().handle,
+                .events = std.os.linux.POLL.IN,
+                .revents = 0,
+            },
+        };
+        const ret = std.os.linux.poll(&fds, 1, 0);
+        return ret > 0 and fds[0].revents & std.os.linux.POLL.IN != 0;
+    }
+
     fn memWrite(self: *LC3, addr: u16, val: u16) void {
         self.memory[addr] = val;
     }
 
     fn memRead(self: *LC3, addr: u16) !u16 {
         if (addr == MMR_KBSR) {
-            if (check_key()) {
+            if (checkKey()) {
                 self.memory[MMR_KBSR] = 1 << 15;
                 self.memory[MMR_KBDR] = @intCast(try stdin.readInt(u8, .big));
             } else {
@@ -176,7 +186,7 @@ pub const LC3 = struct {
         }
     }
 
-    pub fn loop(self: *LC3) !void {
+    pub fn run(self: *LC3) !void {
         loop: while (true) {
             const instr = try self.memRead(self.registers[R_PC]);
             self.registers[R_PC] = @addWithOverflow(self.registers[R_PC], 1)[0];
